@@ -313,7 +313,98 @@ type Resource struct {
 	// Both are resource level fields and do not make sense, and are also not
 	// supported, for nested fields. Nested fields that shouldn't be included
 	// in API payloads are better handled with custom expand/encoder logic.
+<<<<<<< HEAD
 	VirtualFields []*Type `yaml:"virtual_fields,omitempty"`
+=======
+	VirtualFields []*Type `yaml:"virtual_fields"`
+
+	// If true, generates product operation handling logic.
+	AutogenAsync bool `yaml:"autogen_async"`
+
+	// If true, resource is not importable
+	ExcludeImport bool `yaml:"exclude_import"`
+
+	// If true, exclude resource from Terraform Validator
+	// (i.e. terraform-provider-conversion)
+	ExcludeTgc bool `yaml:"exclude_tgc"`
+
+	// If true, skip sweeper generation for this resource
+	ExcludeSweeper bool `yaml:"exclude_sweeper"`
+
+	// Override sweeper settings
+	Sweeper resource.Sweeper
+
+	Timeouts *Timeouts
+
+	// An array of function names that determine whether an error is retryable.
+	ErrorRetryPredicates []string `yaml:"error_retry_predicates"`
+
+	// An array of function names that determine whether an error is not retryable.
+	ErrorAbortPredicates []string `yaml:"error_abort_predicates"`
+
+	// Optional attributes for declaring a resource's current version and generating
+	// state_upgrader code to the output .go file from files stored at
+	// mmv1/templates/terraform/state_migrations/
+	// used for maintaining state stability with resources first provisioned on older api versions.
+	SchemaVersion int `yaml:"schema_version"`
+
+	// From this schema version on, state_upgrader code is generated for the resource.
+	// When unset, state_upgrade_base_schema_version defauts to 0.
+	// Normally, it is not needed to be set.
+	StateUpgradeBaseSchemaVersion int `yaml:"state_upgrade_base_schema_version"`
+
+	StateUpgraders bool `yaml:"state_upgraders"`
+
+	// Do not apply the default attribution label
+	SkipAttributionLabel bool `yaml:"skip_attribution_label"`
+
+	// This block inserts the named function and its attribute into the
+	// resource schema -- the code for the migrate_state function must
+	// be included in the resource constants or come from tpgresource
+	// included for backwards compatibility as an older state migration method
+	// and should not be used for new resources.
+	MigrateState string `yaml:"migrate_state"`
+
+	// Set to true for resources that are unable to be deleted, such as KMS keyrings or project
+	// level resources such as firebase project
+	ExcludeDelete bool `yaml:"exclude_delete"`
+
+	// Set to true for resources that are unable to be read from the API, such as
+	// public ca external account keys
+	SkipRead bool `yaml:"skip_read"`
+
+	// Set to true for resources that wish to disable automatic generation of default provider
+	// value customdiff functions
+	// TODO rewrite: 1 instance used
+	SkipDefaultCdiff bool `yaml:"skip_default_cdiff"`
+
+	// This enables resources that get their project via a reference to a different resource
+	// instead of a project field to use User Project Overrides
+	SupportsIndirectUserProjectOverride bool `yaml:"supports_indirect_user_project_override"`
+
+	// If true, the resource's project field can be specified as either the short form project
+	// id or the long form projects/project-id. The extra projects/ string will be removed from
+	// urls and ids. This should only be used for resources that previously supported long form
+	// project ids for backwards compatibility.
+	LegacyLongFormProject bool `yaml:"legacy_long_form_project"`
+
+	// Function to transform a read error so that handleNotFound recognises
+	// it as a 404. This should be added as a handwritten fn that takes in
+	// an error and returns one.
+	ReadErrorTransform string `yaml:"read_error_transform"`
+
+	// If true, resources that failed creation will be marked as tainted. As a consequence
+	// these resources will be deleted and recreated on the next apply call. This pattern
+	// is preferred over deleting the resource directly in post_create_failure hooks.
+	TaintResourceOnFailedCreate bool `yaml:"taint_resource_on_failed_create"`
+
+	// Add a deprecation message for a resource that's been deprecated in the API.
+	DeprecationMessage string `yaml:"deprecation_message"`
+
+	Async *Async
+
+	Properties []*Type
+>>>>>>> 5c45a6651 (Go Rewrite, replace `skip_sweeper` and `skip_delete` with `exclude_sweeper` and `exclude_delete` (#11644))
 
 	Parameters []*Type
 
